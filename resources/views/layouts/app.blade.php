@@ -15,6 +15,7 @@
 		<link type="text/css" rel="stylesheet" href="{{ url('css/nouislider.min.css') }}"/>
 		<link rel="stylesheet" href="{{ url('css/font-awesome.min.cs') }}s">
 		<link type="text/css" rel="stylesheet" href="{{ url('css/style.css') }}"/>
+		@yield('css')
     </head>
 	<body>
 		<!-- HEADER -->
@@ -23,8 +24,8 @@
 			<div id="top-header">
 				<div class="container">
 					<ul class="header-links pull-left">
-						<li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
-						<li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
+						<li><a href="#"><i class="fa fa-phone"></i> 0956-710-8146</a></li>
+						<li><a href="#"><i class="fa fa-envelope-o"></i> oritecopiersolutions@gmail.com</a></li>
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
@@ -33,7 +34,7 @@
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">
 									<i class="fa fa-user-o"></i>
 									@if(Auth::check())
-										{{ Auth::user()->email }}
+										{{ $loggedInCustomer->first_name . ' ' . $loggedInCustomer->last_name }}
 									@else
 										<span>Login</span>
 									@endif
@@ -109,11 +110,12 @@
 						<!-- SEARCH BAR -->
 						<div class="col-md-6">
 							<div class="header-search">
-								<form>
+								<form method="GET" action="{{ url('/products') }}">
 									<select class="input-select">
 										<option value="0">All Categories</option>
-										<option value="1">Laptop</option>
-										<option value="1">Printer</option>
+										@foreach($categories as $category)
+											<option value="{{ $category->id }}">{{ $category->category_name }}</option>
+										@endforeach
 									</select>
 									<input class="input" placeholder="Search here">
 									<button class="search-btn">Search</button>
@@ -206,13 +208,10 @@
 				<div id="responsive-nav">
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#">Hot Deals</a></li>
-						<li><a href="#">Categories</a></li>
-						<li><a href="#">Laptops</a></li>
-						<li><a href="#">Smartphones</a></li>
-						<li><a href="#">Cameras</a></li>
-						<li><a href="#">Accessories</a></li>
+						<li><a href="{{ url('/') }}">Home</a></li>
+						@foreach($categories as $category)
+							<li><a href="{{ url('/products?category='.$category->id) }}">{{ $category->category_name }}</a></li>
+						@endforeach
 					</ul>
 					<!-- /NAV -->
 				</div>
@@ -247,24 +246,17 @@
 						<div class="col-md-3 col-xs-6">
 							<div class="footer">
 								<h3 class="footer-title">About Us</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
-								<ul class="footer-links">
-									<li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-									<li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-									<li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
-								</ul>
+								<p>Orite Copier and Printer Supplies was established year 2013 by the owner named Mr. Noel O. Oray. It is located at Km30 Villa Carolina 1 National Road Tunasan, Muntinlupa City. Their business is to supply printer machines and parts of printer machines and they open every day from 8:00am to 5:00pm. They have one branch that located in Bacolod City, Negros Occidental, and also they have seven workers and their suppliers are both local and International.</p>
 							</div>
 						</div>
 
 						<div class="col-md-3 col-xs-6">
 							<div class="footer">
-								<h3 class="footer-title">Categories</h3>
+								<h3 class="footer-title">Contact us</h3>
 								<ul class="footer-links">
-									<li><a href="#">Hot deals</a></li>
-									<li><a href="#">Laptops</a></li>
-									<li><a href="#">Smartphones</a></li>
-									<li><a href="#">Cameras</a></li>
-									<li><a href="#">Accessories</a></li>
+									<li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
+									<li><a href="#"><i class="fa fa-phone"></i>0956-710-8146</a></li>
+									<li><a href="#"><i class="fa fa-envelope-o"></i>oritecopiersolutions@gmail.com</a></li>
 								</ul>
 							</div>
 						</div>
@@ -312,10 +304,10 @@
 							<ul class="footer-payments">
 								<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
 								<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
+								<!-- <li><a href="#"><i class="fa fa-cc-paypal"></i></a></li> -->
 								<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
+								<!-- <li><a href="#"><i class="fa fa-cc-discover"></i></a></li> -->
+								<!-- <li><a href="#"><i class="fa fa-cc-amex"></i></a></li> -->
 							</ul>
 							<span class="copyright">
 								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->

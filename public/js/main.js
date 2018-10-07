@@ -54,7 +54,7 @@
 		$this.slick({
 			infinite: true,
 			autoplay: true,
-			speed: 300,
+			speed: 500,
 			dots: false,
 			arrows: true,
 			appendArrows: $nav ? $nav : false,
