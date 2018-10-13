@@ -7,6 +7,7 @@ use App\Product;
 use App\ProductReview;
 use App\Customer;
 use Auth;
+use Cart;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends BaseController
@@ -52,8 +53,8 @@ class ProductController extends BaseController
         ->where('product_id', $product_id)
         ->whereNotIn('invoice.status', [3,4,5])
         ->first();
-
-        $soldQuantity = $soldQuantity->quantity ? $soldQuantity->quantity : 0;
+        
+        $soldQuantity = $soldQuantity ? $soldQuantity->quantity : 0;
 
         $inventoryQuantity = DB::table('inventories')
         ->select(DB::raw("SUM(quantity) as quantity"))
@@ -87,6 +88,8 @@ class ProductController extends BaseController
         ->where('id', '!=', $product->id)
         ->take(20)
         ->get();
+
+        $cartQuantity = Cart::get($product_id) ? Cart::get($product_id)->quantity : 1;
         
         return view('product.index')
         ->with('product', $product)
@@ -97,10 +100,56 @@ class ProductController extends BaseController
         ->with('customerReview', $customerReview)
         ->with('reviewPower', $reviewPower)
         ->with('customer', $customer)
-        ->with('relatedProducts', $relatedProducts);
+        ->with('relatedProducts', $relatedProducts)
+        ->with('cartQuantity', $cartQuantity);
     }
 
-    public function setReview(Request $request) {
+    public function addCart(Request $request) {
+        $productEloquent = Product::find($request->id);
         
+        $previousProduct = Cart::get($request->id);
+        Cart::add(array(
+            'id'       => $request->id,
+            'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
+            'price'    => $productEloquent->product_price,
+            'quantity' => 1
+        ));
+
+        if($previousProduct == null) {
+            echo(json_encode(Cart::get($request->id)));
+        } else {
+            echo("");
+        }
+    }
+
+    public function updateCart(Request $request) {
+        $productEloquent = Product::find($request->id);
+
+        $previousProduct = Cart::get($request->id);
+        $product = Cart::update($request->id, array(
+            'quantity' => array(
+                'relative' => false,
+                'value' => $request->quantity
+            ),
+        ));
+        
+        if($previousProduct == null) {
+            echo(json_encode(Cart::get($request->id)));
+        } else {
+            echo("");
+        }
+    }
+
+    public function getCart() {
+        echo json_encode(Cart::getContent());
+    }
+
+    public function removeCart(Request $request) {
+        Cart::remove($request->id);
+        echo "remove success";
+    }
+
+    public function getCartTotal() {
+        echo 'Php ' . number_format(Cart::getTotal(), 2);
     }
 }

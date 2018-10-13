@@ -44,6 +44,6 @@
         }
     }
 
-    function addToCart($id, $quantity) {
-        
+    function getCartTotal() {
+        return number_format(Cart::getTotal(), 2);
     }

@@ -117,13 +117,13 @@
 											<option value="{{ $category->id }}">{{ $category->category_name }}</option>
 										@endforeach
 									</select>
-									<input class="input" placeholder="Search here">
+									<input class="input" name="product_name" placeholder="Search here">
 									<button class="search-btn">Search</button>
 								</form>
 							</div>
 						</div>
 						<!-- /SEARCH BAR -->
-
+						
 						<!-- ACCOUNT -->
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
@@ -139,38 +139,17 @@
 
 								<!-- Cart -->
 								<div class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="cursor: pointer;">
 										<i class="fa fa-shopping-cart"></i>
 										<span>Your Cart</span>
 										<div class="qty">3</div>
 									</a>
 									<div class="cart-dropdown">
-										<div class="cart-list">
-											<div class="product-widget">
-												<div class="product-img">
-													<img src="./img/product01.png" alt="">
-												</div>
-												<div class="product-body">
-													<h3 class="product-name"><a href="#">product name goes here</a></h3>
-													<h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
-												</div>
-												<button class="delete"><i class="fa fa-close"></i></button>
-											</div>
-
-											<div class="product-widget">
-												<div class="product-img">
-													<img src="./img/product02.png" alt="">
-												</div>
-												<div class="product-body">
-													<h3 class="product-name"><a href="#">product name goes here</a></h3>
-													<h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-												</div>
-												<button class="delete"><i class="fa fa-close"></i></button>
-											</div>
+										<div class="cart-list" id="cart-container">
+											
 										</div>
 										<div class="cart-summary">
-											<small>3 Item(s) selected</small>
-											<h5>SUBTOTAL: $2940.00</h5>
+											<h5>Total: <span id="cart-total">Php {{ getCartTotal() }}</span></h5>
 										</div>
 										<div class="cart-btns">
 											<a href="#">View Cart</a>
@@ -331,6 +310,56 @@
 		<script src="{{ url('js/nouislider.min.js') }}"></script>
 		<script src="{{ url('js/jquery.zoom.min.js') }}"></script>
 		<script src="{{ url('js/main.js') }}"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$.ajax( '/cart', {
+					type: "GET",
+					success: function(products) {
+						$product = JSON.parse(products);
+						
+						$.each($product, function(i, product) {
+							$("#cart-container").append(`
+								<div class="product-widget" id="cart-item-`+product.id+`">
+									<div class="product-img">
+										<img src="data:image/png;base64,`+product.name.split("splitHere")[1]+`" alt="">
+									</div>
+									<div class="product-body">
+										<h3 class="product-name"><a href="#">`+product.name.split("splitHere")[0]+`</a></h3>
+										<h4 class="product-price"><span class="qty" id="cart-qty-`+product.id+`">`+product.quantity+`x</span>`+product.price+`</h4>
+									</div>
+									<button class="delete cart-remove" onclick="removeCartItem(`+product.id+`)"><i class="fa fa-close"></i></button>
+								</div>
+							`)
+						});
+					},
+					error: function(req, status, err) {
+						alert(err)
+					}
+				});
+			});
 
+			function removeCartItem($id) {
+				$.ajax({
+					type: "GET",
+					url: "/cart-remove",
+					data: {
+						id: $id
+					},
+					success: function(response) {
+						// do nothing
+					},
+					error: function(req, status, err) {
+						alert(err)
+					}
+				});
+
+				$.get("/cart-total", function( total ) {
+					document.getElementById("cart-total").textContent = total;
+				});
+				
+				document.getElementById("cart-item-"+$id).remove();
+			}
+		</script>
+		@yield('js')
 	</body>
 </html>

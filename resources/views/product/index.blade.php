@@ -72,10 +72,10 @@
 								<div class="qty-label">
 									Qty
 									<div class="input-number">
-										<input type="number" value="1" name="quantity">
+										<input type="number" value="{{ $cartQuantity }}" name="quantity" id="product_quantity">
 									</div>
 								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+								<button class="add-to-cart-btn" data-id="{{ $product->id }}"><i class="fa fa-shopping-cart"></i> add to cart</button>
 							</div>
 
 							<ul class="product-btns">
@@ -340,7 +340,7 @@
 														</div>
 													</div>
 													<div class="add-to-cart">
-														<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+														<button class="add-to-cart-btn" data-id="{{ $product->id }}"><i class="fa fa-shopping-cart"></i> add to cart</button>
 													</div>
 												</div>
 											@endforeach
@@ -360,4 +360,48 @@
 		@endif
 		<!-- /Section -->
 		<br><br><br>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".add-to-cart-btn").on('click', function() {
+                $id = $(this).attr("data-id");
+                $.ajax( '/update-cart', {
+                    type: "GET",
+                    data: {
+						id: $id,
+						quantity: $("#product_quantity").val()
+                    },
+                    success: function(product) {
+						if(product != "") {
+                            $product = JSON.parse(product);
+                            $("#cart-container").append(`
+                                <div class="product-widget" id="cart-item-`+$id+`">
+                                    <div class="product-img">
+                                        <img src="data:image/png;base64,`+$product.name.split("splitHere")[1]+`" alt="">
+                                    </div>
+                                    <div class="product-body">
+                                        <h3 class="product-name"><a href="#">`+$product.name.split("splitHere")[0]+`</a></h3>
+                                        <h4 class="product-price"><span class="qty" id="cart-qty-`+$id+`">1x</span>`+$product.price+`</h4>
+                                    </div>
+                                    <button class="delete cart-remove" onclick="removeCartItem(`+$id+`)"><i class="fa fa-close"></i></button>
+                                </div>
+                            `)
+						}
+						
+						$.get("/cart-total", function( total ) {
+                            document.getElementById("cart-total").textContent = total;
+                        });
+
+						document.getElementById('cart-qty-' + $id).textContent = $("#product_quantity").val() + "x";
+                    },
+                    error: function(req, status, err) {
+                        console.warn(err)
+                        alert(err)
+                    }
+                })
+            });
+        });
+    </script>
 @endsection

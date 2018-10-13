@@ -84,7 +84,13 @@
                         </div>
                         <!-- /aside Widget -->
 
-                        <button class="primary-btn" style="width: 100%; margin: 20px 0;">Submit</button>
+                        <div class="aside">
+                            <div class="form-group">
+                                <input class="input" type="text" name="product_name" placeholder="Product Name" value="{{ $productName }}">
+                            </div>
+                        </div>
+
+                        <button class="primary-btn" style="width: 100%; margin: 10px 0 20px 0;">Submit</button>
 
                         <!-- aside Widget -->
                         <div class="aside">
@@ -110,7 +116,7 @@
                 <!-- STORE -->
                 <div id="store" class="col-md-9">
                     <!-- store top filter -->
-                    <div class="store-filter clearfix">
+                    <!-- <div class="store-filter clearfix">
                         <div class="store-sort">
                             <label>
                                 Sort By: &nbsp;
@@ -121,7 +127,7 @@
                                 </select>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- /store top filter -->
 
                     <!-- store products -->
@@ -154,7 +160,7 @@
                                             </div>
                                         </div>
                                         <div class="add-to-cart">
-                                            <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                            <button class="add-to-cart-btn" data-id="{{ $product->id }}"><i class="fa fa-shopping-cart"></i> add to cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -176,4 +182,50 @@
         <!-- /container -->
     </div>
     <!-- /SECTION -->
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".add-to-cart-btn").on('click', function() {
+                $id = $(this).attr("data-id");
+
+                $.ajax( '/add-cart', {
+                    type: "GET",
+                    data: {
+                        id: $id
+                    },
+                    success: function(product) {
+                        if(product != "") {
+                            $product = JSON.parse(product);
+                            $("#cart-container").append(`
+                                <div class="product-widget" id="cart-item-`+$id+`">
+                                    <div class="product-img">
+                                        <img src="data:image/png;base64,`+$product.name.split("splitHere")[1]+`" alt="">
+                                    </div>
+                                    <div class="product-body">
+                                        <h3 class="product-name"><a href="#">`+$product.name.split("splitHere")[0]+`</a></h3>
+                                        <h4 class="product-price"><span class="qty" id="cart-qty-`+$id+`">1x</span>`+$product.price+`</h4>
+                                    </div>
+                                    <button class="delete cart-remove" onclick="removeCartItem(`+$id+`)"><i class="fa fa-close"></i></button>
+                                </div>
+                            `)
+                        } else {
+                            $quantityField = document.getElementById('cart-qty-' + $id).textContent;
+                            $quantity = parseInt($quantityField.substring(0, $quantityField.length)) + 1;
+                            document.getElementById('cart-qty-' + $id).textContent = $quantity + "x";
+                        }
+
+                        $.get("/cart-total", function( total ) {
+                            document.getElementById("cart-total").textContent = total;
+                        });
+                    },
+                    error: function(req, status, err) {
+                        console.warn(err)
+                        alert(err)
+                    }
+                })
+            });
+        });
+    </script>
 @endsection

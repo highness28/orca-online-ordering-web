@@ -11,6 +11,7 @@ class ProductsController extends BaseController
     public function index(Request $request) {
         $category = [];
         $brand = [];
+        $productName = $request->input("product_name") ? $request->input("product_name") : "";
 
         if(isset($request->query()['category']) && is_array($request->query()['category'])) {
             $category = $request->query()['category'];
@@ -27,16 +28,24 @@ class ProductsController extends BaseController
         $products = null;
 
         if(count($category) > 0 && count($brand) > 0) {
-            $products = Product::whereIn('category_id', $category)->whereIn('brand_id', $brand)->paginate(15);
+            $products = Product::whereIn('category_id', $category)
+            ->whereIn('brand_id', $brand)
+            ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->paginate(15);
         }
         else if(count($category) > 0 && count($brand) == 0) {
-            $products = Product::whereIn('category_id', $category)->paginate(15);
+            $products = Product::whereIn('category_id', $category)
+            ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->paginate(15);
         }
         else if(count($category) == 0 && count($brand) > 0) {
-            $products = Product::whereIn('brand_id', $brand)->paginate(15);
+            $products = Product::whereIn('brand_id', $brand)
+            ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->paginate(15);
         }
         else {
-            $products = Product::paginate(15);
+            $products = Product::where('product_name', 'LIKE', '%' . $productName . '%')
+            ->paginate(15);
         }
 
         $topSelling = DB::table('orders_list')
@@ -53,6 +62,7 @@ class ProductsController extends BaseController
         ->with('products', $products)
         ->with('breadCrumbCategories', $category)
         ->with('breadCrumbBrands', $brand)
-        ->with('topSelling', $topSelling);
+        ->with('topSelling', $topSelling)
+        ->with('productName', $productName);
     }
 }
