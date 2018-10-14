@@ -47,3 +47,7 @@
     function getCartTotal() {
         return number_format(Cart::getTotal(), 2);
     }
+
+    function getCartCount() {
+        return Cart::getContent()->count();
+    }

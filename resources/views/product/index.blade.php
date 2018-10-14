@@ -66,7 +66,7 @@
 								<h3 class="product-price">{{ 'Php ' . number_format($product->product_price, 2) }}</h3>
 								<span class="product-available">{{ $stock }} In Stock</span>
 							</div>
-							<p>{{ $product->description }}</p>
+							<p>{!! $product->description !!}</p>
 
 							<div class="add-to-cart">
 								<div class="qty-label">
@@ -116,7 +116,7 @@
 								<div id="tab1" class="tab-pane fade in">
 									<div class="row">
 										<div class="col-md-12">
-											<p>{{ $product->description }}</p>
+											<p>{!! $product->description !!}</p>
 										</div>
 									</div>
 								</div>
@@ -126,7 +126,7 @@
 								<div id="tab2" class="tab-pane fade in">
 									<div class="row">
 										<div class="col-md-12">
-											<p>{{ $product->specification }}</p>
+											<p>{!! $product->specification !!}</p>
 										</div>
 									</div>
 								</div>
@@ -237,7 +237,7 @@
 																</div>
 															</div>
 															<div class="review-body">
-																<p>{{ $review->description }}</p>
+																<p>{!! $review->description !!}</p>
 															</div>
 														</li>
 													@endforeach

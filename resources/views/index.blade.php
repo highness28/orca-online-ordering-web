@@ -23,6 +23,7 @@
     <div class="section">
         <!-- container -->
         <div class="container">
+            {!! Session::get('message') !!}
             <!-- row -->
             <div class="row">
                 @foreach($featuredCategory as $featured)

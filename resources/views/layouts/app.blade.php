@@ -136,7 +136,7 @@
 									</a>
 								</div>
 								<!-- /Wishlist -->
-
+								
 								<!-- Cart -->
 								<div class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="cursor: pointer;">
@@ -152,8 +152,7 @@
 											<h5>Total: <span id="cart-total">Php {{ getCartTotal() }}</span></h5>
 										</div>
 										<div class="cart-btns">
-											<a href="#">View Cart</a>
-											<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+											<button type="button" style="background-color: #0288D1; color: white; margin: 0; height: 40px; width: 100%;"><a href="{{ url('/checkout') }}" style="color: white; text-decoration: none;">Checkout</a></button>
 										</div>
 									</div>
 								</div>

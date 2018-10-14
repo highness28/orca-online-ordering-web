@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\ProductReview;
 use App\Customer;
+use App\AddressBook;
+use App\Invoice;
+use App\OrderList;
+use App\CardLog;
 use Auth;
 use Cart;
+use App\Notifications\OrderPlaced;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends BaseController
 {
@@ -126,16 +132,22 @@ class ProductController extends BaseController
         $productEloquent = Product::find($request->id);
 
         $previousProduct = Cart::get($request->id);
-        $product = Cart::update($request->id, array(
-            'quantity' => array(
-                'relative' => false,
-                'value' => $request->quantity
-            ),
-        ));
-        
+
         if($previousProduct == null) {
+            Cart::add(array(
+                'id'       => $request->id,
+                'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
+                'price'    => $productEloquent->product_price,
+                'quantity' => $request->quantity
+            ));
             echo(json_encode(Cart::get($request->id)));
         } else {
+            $product = Cart::update($request->id, array(
+                'quantity' => array(
+                    'relative' => false,
+                    'value' => $request->quantity
+                ),
+            ));
             echo("");
         }
     }
@@ -151,5 +163,97 @@ class ProductController extends BaseController
 
     public function getCartTotal() {
         echo 'Php ' . number_format(Cart::getTotal(), 2);
+    }
+
+    public function checkout() {
+        $cartContents = Cart::getContent();
+        $total = Cart::getTotal();
+
+        if(Auth::check()) {
+            $customerInfo = Customer::find(Auth::user()->id);
+            $addressBooks = AddressBook::get();
+        } else {
+            $customerInfo = null;
+            $addressBooks = [];
+        }
+        
+        return view('checkout.index')
+        ->with('cartContents', $cartContents)
+        ->with('total', $total)
+        ->with('addressBooks', $addressBooks)
+        ->with('customerInfo', $customerInfo);
+    }
+
+    public function payment(Request $request) {
+        $user = Auth::user();
+
+        $customerInfo = Customer::find(Auth::user()->id);
+
+        if($request->ship_different == "on") {
+            Validator::make($request->all(), [
+                'delivery_address' => 'required',
+                'province' => 'required',
+                'city' => 'required',
+                'barangay' => 'required',
+                'phone_number' => 'required',
+                'card_number' => 'required|regex:/^4[0-9]{12}(?:[0-9]{3})?$/u',
+                'expiration' => 'required',
+                'cvc' => 'required|regex:/^[0-9]+$/u'
+            ])->validate();
+            
+            $addressBook = AddressBook::create([
+                'delivery_address' => $request->delivery_address,
+                'province' => $request->province,
+                'city' => $request->city,
+                'barangay' => $request->barangay,
+                'phone_number' => $request->phone_number,
+                'customer_id' => $customerInfo->id
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}/',
+                'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
+                'cvc' => 'required|regex:/^[0-9]{3}+$/u'
+            ])->validate();
+            
+            $addressBook = AddressBook::find($request->address_book);
+        }
+
+        $invoice = Invoice::create([
+            'address_book_id' => $addressBook->id,
+            'customer_id' => $customerInfo->id,
+            'tracking_number' => base64_encode(time()),
+            'total' => Cart::getTotal()
+        ]);
+
+        CardLog::create([
+            'invoice_id' => $invoice->id,
+            'card_number' => $request->card_number,
+            'expiration' => $request->expiration,
+            'cvc' => $request->cvc,
+        ]);
+
+        $cartContent = Cart::getContent();
+        $cartTotal = Cart::getTotal();
+
+        foreach($cartContent as $product) {
+            OrderList::create([
+                'invoice_id' => $invoice->id,
+                'product_id' => $product->id,
+                'quantity' => $product->quantity,
+                'subtotal' => $product->quantity * $product->price
+            ]);
+        }
+
+        $user->notify(new OrderPlaced($customerInfo, $cartContent, $cartTotal));
+
+        // Cart::clear();
+
+        return redirect('/')
+        ->with('message', '<div class="alert alert-info alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> Success</h4>
+                            Thank you for shopping with us! we will inform you once your order has been receive and verified.
+                            </div>');
     }
 }
