@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Product;
 use Illuminate\Support\Facades\DB;
 
-class ProductsController extends BaseController
+class ProductsController extends Controller
 {
     public function index(Request $request) {
         $category = [];

@@ -34,7 +34,7 @@
                         <div class="aside">
                             <h3 class="aside-title">Categories</h3>
                             <div class="checkbox-filter">
-                                @foreach($categories as $category)
+                                @foreach(getGlobalCategories() as $category)
                                     <div class="input-checkbox">
                                         <input type="checkbox" name="category[]" type="checkbox" value="{{ $category->id }}" id="category-{{ $category->id }}" {{ in_array($category->id, $breadCrumbCategories) ? 'checked' : '' }}>
                                         <label for="category-{{ $category->id }}">
@@ -71,7 +71,7 @@
                         <div class="aside">
                             <h3 class="aside-title">Brand</h3>
                             <div class="checkbox-filter">
-                                @foreach($brands as $brand)
+                                @foreach(getGlobalBrands() as $brand)
                                     <div class="input-checkbox">
                                         <input type="checkbox" name="brand[]" value="{{ $brand->id }}" id="brand-{{ $brand->id }}" {{ in_array($brand->id, $breadCrumbBrands) ? 'checked' : '' }}>
                                         <label for="brand-{{ $brand->id }}">
@@ -196,7 +196,9 @@
                         id: $id
                     },
                     success: function(product) {
-                        if(product != "") {
+                        if(product == "error") {
+                            alert("Insufficient stocks left")
+                        } else if(product != "") {
                             $product = JSON.parse(product);
                             $("#cart-container").append(`
                                 <div class="product-widget" id="cart-item-`+$id+`">
@@ -218,6 +220,11 @@
 
                         $.get("/cart-total", function( total ) {
                             document.getElementById("cart-total").textContent = total;
+                        });
+
+                        $.get("/cart-qty", function( quantity ) {
+                            document.getElementById("cart-badge").textContent = quantity;
+                            document.getElementById("cart-badge").classList.add('qty');
                         });
                     },
                     error: function(req, status, err) {

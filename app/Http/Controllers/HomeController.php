@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Product;
 use App\FeaturedCategory;
+use App\Category;
 use Cart;
 use Illuminate\Support\Facades\DB;
 
-class HomeController extends BaseController
+class HomeController extends Controller
 {
     public function index() {
         $newProducts = Product::orderBy('id', 'desc')->take(10)->get();
-        
+        $newCategories = Category::orderBy('id', 'desc')->take(5)->get();
         $featuredCategory = FeaturedCategory::where('status', '1')->get();
 
         $topSelling = DB::table('orders_list')

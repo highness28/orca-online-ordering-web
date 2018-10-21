@@ -251,8 +251,8 @@
 										<div class="col-md-3">
 											<div id="review-form">
 												<form class="review-form">
-													<input class="input" type="text" placeholder="Your Name" value="{{ Auth::check() ? $loggedInCustomer->first_name . ' ' . $loggedInCustomer->last_name : '' }}" disabled>
-													<input class="input" type="email" placeholder="Your Email" value="{{ Auth::check() ? $loggedInCustomer->account->email : '' }}" disabled>
+													<input class="input" type="text" placeholder="Your Name" value="{{ Auth::check() ? getAuth()->first_name . ' ' . getAuth()->last_name : '' }}" disabled>
+													<input class="input" type="email" placeholder="Your Email" value="{{ Auth::check() ? getAuth()->account->email : '' }}" disabled>
 													<textarea class="input" placeholder="Your Review" required></textarea>
 													<div class="input-rating">
 														<span>Your Rating: </span>
@@ -266,7 +266,7 @@
 													</div>
 													@if($reviewPower)
 														<button class="primary-btn">Submit</button>
-													@elseif($loggedInCustomer->count == 0)
+													@elseif(!Auth::check())
 														<p style="color: red;">Please login to review.</p>													
 													@endif
 													
@@ -374,7 +374,9 @@
 						quantity: $("#product_quantity").val()
                     },
                     success: function(product) {
-						if(product != "") {
+						if(product == "error") {
+							alert("Insufficient stocks left")
+						} else if(product != "") {
                             $product = JSON.parse(product);
                             $("#cart-container").append(`
                                 <div class="product-widget" id="cart-item-`+$id+`">
@@ -387,14 +389,21 @@
                                     </div>
                                     <button class="delete cart-remove" onclick="removeCartItem(`+$id+`)"><i class="fa fa-close"></i></button>
                                 </div>
-                            `)
-						}
-						
-						$.get("/cart-total", function( total ) {
-                            document.getElementById("cart-total").textContent = total;
-                        });
+							`)
 
-						document.getElementById('cart-qty-' + $id).textContent = $("#product_quantity").val() + "x";
+							document.getElementById('cart-qty-' + $id).textContent = $("#product_quantity").val() + "x";
+						} else {
+							document.getElementById('cart-qty-' + $id).textContent = $("#product_quantity").val() + "x";
+						}
+
+						$.get("/cart-qty", function( quantity ) {
+								document.getElementById("cart-badge").textContent = quantity;
+								document.getElementById("cart-badge").classList.add('qty');
+							});
+
+						$.get("/cart-total", function( total ) {
+							document.getElementById("cart-total").textContent = total;
+						});
                     },
                     error: function(req, status, err) {
                         console.warn(err)

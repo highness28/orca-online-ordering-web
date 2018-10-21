@@ -14,6 +14,14 @@
         }
     }
 
+    function getGlobalCategories() {
+        return App\Category::get();
+    }
+
+    function getGlobalBrands() {
+        return App\Brand::get();
+    }
+
     function getCategories($breadCrumbCategories) {
         $eloquentCategory = App\Category::whereIn('id', $breadCrumbCategories)->get();
 
@@ -50,4 +58,12 @@
 
     function getCartCount() {
         return Cart::getContent()->count();
+    }
+
+    function getAuth() {
+        if(\Auth::check()) {
+            $loggedInCustomer = App\Customer::find(\Auth::user()->customer_id);
+            return $loggedInCustomer;
+        }
+        return null;
     }

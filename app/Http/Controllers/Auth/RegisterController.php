@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Customer;
+use App\CustomerAccount;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -47,10 +48,11 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
+    {   
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'string|max:255',
+            'email' => 'required|string|email|max:255|unique:customer_account',
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
@@ -63,8 +65,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        $customer = Customer::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone_number' => $data['phone_number'],
+        ]);
+
+        return CustomerAccount::create([
+            'customer_id' => $customer->id,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

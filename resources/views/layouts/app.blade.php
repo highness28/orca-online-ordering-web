@@ -33,8 +33,8 @@
 							<div class="dropdown pull-right">
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">
 									<i class="fa fa-user-o"></i>
-									@if(Auth::check())
-										{{ $loggedInCustomer->first_name . ' ' . $loggedInCustomer->last_name }}
+									@if(getAuth() != null)
+										{{ getAuth()->first_name . ' ' . getAuth()->last_name }}
 									@else
 										<span>Login</span>
 									@endif
@@ -77,7 +77,7 @@
 											<input class="form-check-input" type="hidden" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
 											<div class="cart-btns">
-												<a href="#">Register</a>
+												<a href="{{ url('/register') }}">Register</a>
 												<a href="#" onclick="document.getElementById('login-form').submit();">Login</a>
 											</div>
 										</form>
@@ -113,7 +113,7 @@
 								<form method="GET" action="{{ url('/products') }}">
 									<select class="input-select">
 										<option value="0">All Categories</option>
-										@foreach($categories as $category)
+										@foreach(getGlobalCategories() as $category)
 											<option value="{{ $category->id }}">{{ $category->category_name }}</option>
 										@endforeach
 									</select>
@@ -142,7 +142,7 @@
 									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="cursor: pointer;">
 										<i class="fa fa-shopping-cart"></i>
 										<span>Your Cart</span>
-										<div class="qty">3</div>
+										<div id="cart-badge"></div>
 									</a>
 									<div class="cart-dropdown">
 										<div class="cart-list" id="cart-container">
@@ -187,7 +187,7 @@
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
 						<li><a href="{{ url('/') }}">Home</a></li>
-						@foreach($categories as $category)
+						@foreach(getGlobalCategories() as $category)
 							<li><a href="{{ url('/products?category='.$category->id) }}">{{ $category->category_name }}</a></li>
 						@endforeach
 					</ul>
@@ -311,6 +311,16 @@
 		<script src="{{ url('js/main.js') }}"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				$.get("/cart-qty", function( quantity ) {
+					if(quantity != 0) {
+						document.getElementById("cart-badge").textContent = quantity;
+						document.getElementById("cart-badge").classList.add('qty');
+					}  else {
+						document.getElementById("cart-badge").textContent = "";
+						document.getElementById("cart-badge").classList.remove('qty');
+					}
+				});
+
 				$.ajax( '/cart', {
 					type: "GET",
 					success: function(products) {
@@ -351,11 +361,20 @@
 						alert(err)
 					}
 				});
-
+				
 				$.get("/cart-total", function( total ) {
 					document.getElementById("cart-total").textContent = total;
 				});
-				
+
+				$.get("/cart-qty", function( quantity ) {
+					if(quantity != 0) {
+						document.getElementById("cart-badge").textContent = quantity;
+					}  else {
+						document.getElementById("cart-badge").textContent = "";
+						document.getElementById("cart-badge").classList.remove('qty');
+					}
+				});
+
 				document.getElementById("cart-item-"+$id).remove();
 			}
 		</script>

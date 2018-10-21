@@ -16,7 +16,7 @@ use App\Notifications\OrderPlaced;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class ProductController extends BaseController
+class ProductController extends Controller
 {
     public function index(Request $request) {
         if(!$request->id) {
@@ -65,7 +65,7 @@ class ProductController extends BaseController
         $inventoryQuantity = DB::table('inventories')
         ->select(DB::raw("SUM(quantity) as quantity"))
         ->where('product_id', $product_id)
-        ->where('status', '1')
+        ->where('status', '0')
         ->first();
 
         $inventoryQuantity = $inventoryQuantity->quantity ? $inventoryQuantity->quantity : 0;
@@ -112,25 +112,27 @@ class ProductController extends BaseController
 
     public function addCart(Request $request) {
         $productEloquent = Product::find($request->id);
+
+        $soldQuantity = DB::table('orders_list')
+        ->select(DB::raw("SUM(quantity) as quantity"))
+        ->join('invoice', 'invoice.id', 'orders_list.invoice_id')
+        ->groupBy('product_id')
+        ->where('product_id', $request->id)
+        ->whereNotIn('invoice.status', [3,4,5])
+        ->first();
         
-        $previousProduct = Cart::get($request->id);
-        Cart::add(array(
-            'id'       => $request->id,
-            'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
-            'price'    => $productEloquent->product_price,
-            'quantity' => 1
-        ));
+        $soldQuantity = $soldQuantity ? $soldQuantity->quantity : 0;
 
-        if($previousProduct == null) {
-            echo(json_encode(Cart::get($request->id)));
-        } else {
-            echo("");
-        }
-    }
+        $inventoryQuantity = DB::table('inventories')
+        ->select(DB::raw("SUM(quantity) as quantity"))
+        ->where('product_id', $request->id)
+        ->where('status', '0')
+        ->first();
 
-    public function updateCart(Request $request) {
-        $productEloquent = Product::find($request->id);
+        $inventoryQuantity = $inventoryQuantity->quantity ? $inventoryQuantity->quantity : 0;
 
+        $stock = $inventoryQuantity - $soldQuantity;
+        
         $previousProduct = Cart::get($request->id);
 
         if($previousProduct == null) {
@@ -138,17 +140,71 @@ class ProductController extends BaseController
                 'id'       => $request->id,
                 'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
                 'price'    => $productEloquent->product_price,
-                'quantity' => $request->quantity
+                'quantity' => 1
             ));
+
             echo(json_encode(Cart::get($request->id)));
         } else {
-            $product = Cart::update($request->id, array(
-                'quantity' => array(
-                    'relative' => false,
-                    'value' => $request->quantity
-                ),
-            ));
-            echo("");
+            if($previousProduct->quantity+1 > $stock) {
+                echo "error";
+            } else {
+                Cart::add(array(
+                    'id'       => $request->id,
+                    'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
+                    'price'    => $productEloquent->product_price,
+                    'quantity' => 1
+                ));
+
+                echo("");
+            }
+        }
+    }
+
+    public function updateCart(Request $request) {
+        $productEloquent = Product::find($request->id);
+
+        $soldQuantity = DB::table('orders_list')
+        ->select(DB::raw("SUM(quantity) as quantity"))
+        ->join('invoice', 'invoice.id', 'orders_list.invoice_id')
+        ->groupBy('product_id')
+        ->where('product_id', $request->id)
+        ->whereNotIn('invoice.status', [3,4,5])
+        ->first();
+        
+        $soldQuantity = $soldQuantity ? $soldQuantity->quantity : 0;
+
+        $inventoryQuantity = DB::table('inventories')
+        ->select(DB::raw("SUM(quantity) as quantity"))
+        ->where('product_id', $request->id)
+        ->where('status', '0')
+        ->first();
+
+        $inventoryQuantity = $inventoryQuantity->quantity ? $inventoryQuantity->quantity : 0;
+
+        $stock = $inventoryQuantity - $soldQuantity;
+
+        if($request->quantity > $stock) {
+            echo "error";
+        } else {
+            $previousProduct = Cart::get($request->id);
+
+            if($previousProduct == null) {
+                Cart::add(array(
+                    'id'       => $request->id,
+                    'name'     => $productEloquent->product_name."splitHere".base64_encode($productEloquent->image),
+                    'price'    => $productEloquent->product_price,
+                    'quantity' => $request->quantity
+                ));
+                echo(json_encode(Cart::get($request->id)));
+            } else {
+                $product = Cart::update($request->id, array(
+                    'quantity' => array(
+                        'relative' => false,
+                        'value' => $request->quantity
+                    ),
+                ));
+                echo("");
+            }
         }
     }
 
@@ -163,6 +219,10 @@ class ProductController extends BaseController
 
     public function getCartTotal() {
         echo 'Php ' . number_format(Cart::getTotal(), 2);
+    }
+
+    public function getCartQuantity() {
+        echo Cart::getContent()->count();
     }
 
     public function checkout() {
@@ -187,7 +247,7 @@ class ProductController extends BaseController
     public function payment(Request $request) {
         $user = Auth::user();
 
-        $customerInfo = Customer::find(Auth::user()->id);
+        $customerInfo = Customer::find(Auth::user()->customer_id);
 
         if($request->ship_different == "on") {
             Validator::make($request->all(), [
@@ -196,9 +256,9 @@ class ProductController extends BaseController
                 'city' => 'required',
                 'barangay' => 'required',
                 'phone_number' => 'required',
-                'card_number' => 'required|regex:/^4[0-9]{12}(?:[0-9]{3})?$/u',
-                'expiration' => 'required',
-                'cvc' => 'required|regex:/^[0-9]+$/u'
+                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
+                'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
+                'cvc' => 'required|regex:/^[0-9]{3}+$/u'
             ])->validate();
             
             $addressBook = AddressBook::create([
@@ -211,7 +271,7 @@ class ProductController extends BaseController
             ]);
         } else {
             $validator = Validator::make($request->all(), [
-                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}/',
+                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
                 'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
                 'cvc' => 'required|regex:/^[0-9]{3}+$/u'
             ])->validate();
@@ -247,7 +307,7 @@ class ProductController extends BaseController
 
         $user->notify(new OrderPlaced($customerInfo, $cartContent, $cartTotal));
 
-        // Cart::clear();
+        Cart::clear();
 
         return redirect('/')
         ->with('message', '<div class="alert alert-info alert-dismissible">

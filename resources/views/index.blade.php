@@ -59,7 +59,7 @@
                         <h3 class="title">New Products</h3>
                         <div class="section-nav">
                             <ul class="section-tab-nav tab-nav">
-                                @foreach($categories as $category)
+                                @foreach(getGlobalCategories() as $category)
                                     <li><a href="{{ url('/products?category='.$category->id) }}">{{ $category->category_name }}</a></li>
                                 @endforeach
                             </ul>
@@ -300,7 +300,9 @@
                         id: $id
                     },
                     success: function(product) {
-                        if(product != "") {
+                        if(product == "error") {
+                            alert("Insufficient stocks left")
+                        } else if(product != "") {
                             $product = JSON.parse(product);
                             $("#cart-container").append(`
                                 <div class="product-widget" id="cart-item-`+$id+`">
@@ -322,6 +324,11 @@
                         
                         $.get("/cart-total", function( total ) {
                             document.getElementById("cart-total").textContent = total;
+                        });
+
+                        $.get("/cart-qty", function( quantity ) {
+                            document.getElementById("cart-badge").textContent = quantity;
+                            document.getElementById("cart-badge").classList.add('qty');
                         });
                     },
                     error: function(req, status, err) {

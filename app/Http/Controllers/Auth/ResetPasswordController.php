@@ -34,6 +34,20 @@ class ResetPasswordController extends Controller
      */
     public function __construct()
     {
+        $this->auth = $auth;
+        $this->passwords = $passwords;
+        
         $this->middleware('guest');
+    }
+
+    // now we define the 'modify' route.
+    public function getModify($token = null)
+    {
+        if (is_null($token))
+        {
+            throw new NotFoundHttpException;
+        }
+
+        return view('auth.reset')->with('token', $token);
     }
 }
