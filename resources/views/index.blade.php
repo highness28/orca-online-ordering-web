@@ -26,7 +26,9 @@
             {!! Session::get('message') !!}
             <!-- row -->
             <div class="row">
+                <?php $control = 0 ?>
                 @foreach($featuredCategory as $featured)
+                    <?php $control++ ?>
                     <div class="col-md-4 col-xs-6">
                         <div class="shop" style="border: 1px solid #eee;">
                             <div class="shop-img">
@@ -38,6 +40,11 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($control%3==0)
+                        <div class="clearfix"></div>
+                        <?php $control = 0 ?>
+                    @endif
                 @endforeach
             </div>
             <!-- /row -->

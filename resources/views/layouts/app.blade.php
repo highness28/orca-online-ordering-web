@@ -132,7 +132,7 @@
 									<a href="#">
 										<i class="fa fa-heart-o"></i>
 										<span>Your Wishlist</span>
-										<div class="qty">2</div>
+										<!-- <div class="qty">2</div> -->
 									</a>
 								</div>
 								<!-- /Wishlist -->

@@ -132,7 +132,9 @@
 
                     <!-- store products -->
                         <div class="row">
+                            <?php $control = 0 ?>
                             @foreach($products as $product)
+                                <?php $control++ ?>
                                 <div class="col-md-4 col-xs-6 clearfix">
                                     <div class="product">
                                         <div class="product-img">
@@ -164,6 +166,11 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if($control%3==0)
+                                    <div class="clearfix"></div>
+                                    <?php $control = 0 ?>
+                                @endif
                             @endforeach
 						</div>
                     <!-- /store products -->
