@@ -14,4 +14,12 @@ class Invoice extends Model
         'tracking_number',
         'total'
     ];
+
+    public function customer() {
+        return $this->hasOne('App\Customer', 'id', 'customer_id');
+    }
+
+    public function deliveryAddress() {
+        return $this->hasOne('App\AddressBook', 'id', 'address_book_id');
+    }
 }

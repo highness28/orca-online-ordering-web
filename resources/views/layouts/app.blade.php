@@ -31,6 +31,11 @@
 					<ul class="header-links pull-right">
 						<li>
 							<div class="dropdown pull-right">
+								@if(getAuth() != null)
+									<a href="{{ url('/orders') }}" style="margin-right: 20px;">
+										<i class="fa fa-address-card"></i> Orders
+									</a>
+								@endif
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">
 									<i class="fa fa-user-o"></i>
 									@if(getAuth() != null)

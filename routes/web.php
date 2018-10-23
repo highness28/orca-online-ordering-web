@@ -30,3 +30,6 @@ Route::post('/payment', 'ProductController@payment');
 
 Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('/register', 'Auth\RegisterController@register');
+
+Route::get('/orders', 'OrderController@index');
+Route::get('/order/{id}', 'OrderController@view');
