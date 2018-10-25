@@ -57,7 +57,7 @@ class ProductController extends Controller
         ->join('invoice', 'invoice.id', 'orders_list.invoice_id')
         ->groupBy('product_id')
         ->where('product_id', $product_id)
-        ->whereNotIn('invoice.status', [3,4,5])
+        ->whereIn('invoice.status', [1,2,3])
         ->first();
         
         $soldQuantity = $soldQuantity ? $soldQuantity->quantity : 0;
