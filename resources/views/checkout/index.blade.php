@@ -177,7 +177,12 @@
                                 <div><strong class="order-total">{{ 'Php ' . number_format($total) }}</strong></div>
                             </div>
                         </div>
-                        <div class="payment-method">
+
+                        <div>
+                            <label for="">Cash on delivery</label>
+                        </div>
+
+                        <!-- <div class="payment-method">
                             <div class="input-radio">
                                 <input type="radio" id="payment-1" checked="checked">
                                 <label for="payment-1">
@@ -215,14 +220,20 @@
                                 </div>
 
                             </div>
-                        </div>
-
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="terms">
+                        </div> -->
+                        
+                        <div class="input-checkbox" style="margin-top: 20px;">
+                            <input type="checkbox" name="terms_and_condition" id="terms">
                             <label for="terms">
                                 <span></span>
                                 I've read and accept the <a href="#">terms & conditions</a>
                             </label>
+                            <br>
+                            @if ($errors->has('terms_and_condition'))
+                                <span class="invalid-feedback" role="alert" style="color: red;">
+                                    <strong>{{ $errors->first('terms_and_condition') }}</strong>
+                                </span>
+                            @endif
                         </div>
 
                         @if(Auth::check())

@@ -256,9 +256,10 @@ class ProductController extends Controller
                 'city' => 'required',
                 'barangay' => 'required',
                 'phone_number' => 'required',
-                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
-                'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
-                'cvc' => 'required|regex:/^[0-9]{3}+$/u'
+                'terms_and_condition' => 'required',
+                // 'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
+                // 'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
+                // 'cvc' => 'required|regex:/^[0-9]{3}+$/u'
             ])->validate();
             
             $addressBook = AddressBook::create([
@@ -267,13 +268,15 @@ class ProductController extends Controller
                 'city' => $request->city,
                 'barangay' => $request->barangay,
                 'phone_number' => $request->phone_number,
-                'customer_id' => $customerInfo->id
+                'customer_id' => $customerInfo->id,
+                'terms_and_condition' => 'required',
             ]);
         } else {
             $validator = Validator::make($request->all(), [
-                'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
-                'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
-                'cvc' => 'required|regex:/^[0-9]{3}+$/u'
+                // 'card_number' => 'required|regex:/[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}-{0,1}[0-9]{4}+$/u',
+                // 'expiration' => 'required|regex:/[0-9]{2}\/[0-9]{2}/',
+                // 'cvc' => 'required|regex:/^[0-9]{3}+$/u',
+                'terms_and_condition' => 'required'
             ])->validate();
             
             $addressBook = AddressBook::find($request->address_book);
@@ -286,12 +289,12 @@ class ProductController extends Controller
             'total' => Cart::getTotal()
         ]);
 
-        CardLog::create([
-            'invoice_id' => $invoice->id,
-            'card_number' => $request->card_number,
-            'expiration' => $request->expiration,
-            'cvc' => $request->cvc,
-        ]);
+        // CardLog::create([
+        //     'invoice_id' => $invoice->id,
+        //     'card_number' => $request->card_number,
+        //     'expiration' => $request->expiration,
+        //     'cvc' => $request->cvc,
+        // ]);
 
         $cartContent = Cart::getContent();
         $cartTotal = Cart::getTotal();
