@@ -32,7 +32,7 @@
                     <div class="col-md-4 col-xs-6">
                         <div class="shop" style="border: 1px solid #eee;">
                             <div class="shop-img">
-                                <img src="data:image/png;base64,{{ base64_encode($featured->image) }}" alt="">
+                                <img src="data:image/png;base64,{{ base64_encode($featured->image) }}" alt="" style="height: 300px;">
                             </div>
                             <div class="shop-body">
                                 <h3>{{ $featured->title }}</h3>
@@ -85,7 +85,7 @@
                                     @foreach($newProducts as $product)
                                         <div class="product">
                                             <div class="product-img" style="padding-top: 20px;">
-                                                <img src="data:image/png;base64,{{ base64_encode($product->image) }}" alt="New Product" style="padding: 10px;">
+                                                <img src="data:image/png;base64,{{ base64_encode($product->image) }}" alt="New Product" style="padding: 10px; height: 300px;">
                                                 <div class="product-label">
                                                     <span class="new">{{ $product->brand->brand_name }}</span>
                                                 </div>
@@ -173,7 +173,7 @@
                                     @foreach($topSelling as $product)
                                         <div class="product">
                                             <div class="product-img" style="padding-top: 20px;">
-                                                <img src="data:image/png;base64,{{ base64_encode($product->image) }}" alt="New Product" style="padding: 10px;">
+                                                <img src="data:image/png;base64,{{ base64_encode($product->image) }}" alt="New Product" style="padding: 10px; height: 300px;">
                                                 <div class="product-label">
                                                     <span class="new">{{ $product->brand_name }}</span>
                                                 </div>

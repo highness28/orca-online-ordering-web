@@ -69,9 +69,9 @@ class ProductController extends Controller
         ->first();
 
         $inventoryQuantity = $inventoryQuantity->quantity ? $inventoryQuantity->quantity : 0;
-
+        
         $stock = $inventoryQuantity - $soldQuantity;
-
+        
         $customer = null;
         $reviewPower = false;
         if(Auth::check()) {
@@ -168,7 +168,7 @@ class ProductController extends Controller
         ->join('invoice', 'invoice.id', 'orders_list.invoice_id')
         ->groupBy('product_id')
         ->where('product_id', $request->id)
-        ->whereNotIn('invoice.status', [3,4,5])
+        ->whereNotIn('invoice.status', [4,5])
         ->first();
         
         $soldQuantity = $soldQuantity ? $soldQuantity->quantity : 0;

@@ -11,12 +11,12 @@
                 <table id="inventory_datable" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th width="50">Tracking #</th>
-                            <th>Delivery Address</th>
-                            <th>Total</th>
-                            <th>Delivery Date</th>
-                            <th>Date Purchased</th>
-                            <th>Action</th>
+                            <th width="50">TRACKING #</th>
+                            <th>DELIVERY ADDRESS</th>
+                            <th>TOTAL</th>
+                            <th>DELIVERY DATE</th>
+                            <th>DATE PURCHASED</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>

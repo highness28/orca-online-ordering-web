@@ -30,11 +30,6 @@
                             @foreach($ordersList as $order)
                                 <a href="{{ url('/product?id='.base64_encode($order->product_id)) }}">
                                     <li>
-                                        @if($order->product->image)
-                                            <img src="data:image/png;base64,{{ base64_encode($order->product->image) }}" alt="Product" style="height: 30px;">
-                                        @else
-                                            <img src="{{ url('/img/products/default.png') }}" alt="Product" style="height: 30px;">
-                                        @endif
                                         <strong>{{ $order->product->product_name }}</strong>
                                     </li>
                                 </a>

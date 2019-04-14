@@ -178,14 +178,22 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label for="">Cash on delivery</label>
-                        </div>
+                        <label>Payment method</label>
 
-                        <!-- <div class="payment-method">
+                        <div class="payment-method">
                             <div class="input-radio">
-                                <input type="radio" id="payment-1" checked="checked">
+                                <input type="radio" name="payment-method" id="payment-1" checked="checked">
                                 <label for="payment-1">
+                                    <span></span>
+                                    Cash on Delivery
+                                </label>
+                                <div class="caption">
+                                </div>
+                            </div>
+                            
+                            <div class="input-radio">
+                                <input type="radio" name="payment-method" id="payment-2">
+                                <label for="payment-2">
                                     <span></span>
                                     Credit / Debit / Visa / BDO
                                 </label>
@@ -218,9 +226,9 @@
                                         @endif
                                     </div>
                                 </div>
-
                             </div>
-                        </div> -->
+
+                        </div>
                         
                         <div class="input-checkbox" style="margin-top: 20px;">
                             <input type="checkbox" name="terms_and_condition" id="terms">
