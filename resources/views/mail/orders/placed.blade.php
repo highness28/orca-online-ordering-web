@@ -14,6 +14,8 @@
     {{ explode('splitHere', $order->name)[0] . '    x' . $order->quantity }} - {{ 'Php ' . number_format($order->quantity * $order->price, 2) }}
     @endforeach
 
+    Mode of payment: {{ $payment_mode }}
+
     Total: {{ 'Php ' . number_format($total, 2) }}
     
     Have been received and is undergoing verification. we will send you a notification once the verification is done. Thank you for shopping!

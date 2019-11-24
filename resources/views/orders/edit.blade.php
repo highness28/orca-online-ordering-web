@@ -16,6 +16,7 @@
                         <li><strong>Tacking number:</strong> {{ $invoice->tracking_number }}</li>
                         <li><strong>Date orderd:</strong> {{ date('F d, Y', strtotime($invoice->created_at)) }}</li>
                         <li><strong>Status: </strong> {{ $invoice->status == 3 ? 'Completed' : ($invoice->status == 2 ? 'For Delivery' : 'For Verification') }} {{ $invoice->delivery_date ? ' on ' . date('F d, Y', strtotime($invoice->delivery_date)):'' }}</li>
+                        <li><strong>Payment Mode: </strong> {{ $invoice->payment_type == 0 ? "Cash on Delivery" : "Card" }}</li>
                         <li><strong>Total: </strong> {{ 'Php ' . number_format($invoice->total, 2) }}</li>
                     </ul>
                 </div>

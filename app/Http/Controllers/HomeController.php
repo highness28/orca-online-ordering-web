@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
     public function index() {
-        $newProducts = Product::orderBy('id', 'desc')->take(10)->get();
+        $newProducts = Product::orderBy('id', 'desc')->where('deleted_at', '=', null)->take(10)->get();
         $newCategories = Category::orderBy('id', 'desc')->take(5)->get();
         $featuredCategory = FeaturedCategory::where('status', '1')->get();
 
@@ -21,6 +21,7 @@ class HomeController extends Controller
         ->join('products', 'orders_list.product_id', '=', 'products.id')
         ->join('category', 'products.category_id', '=', 'category.id')
         ->join('brand', 'products.brand_id', '=', 'brand.id')
+        ->where('deleted_at', '=', null)
         ->groupBy('product_id')
         ->orderBy('quantity', 'desc')
         ->take(10)
@@ -30,6 +31,7 @@ class HomeController extends Controller
         ->select(DB::raw("product_id, product_name, product_price, category_name, image"))
         ->join('products', 'orders_list.product_id', '=', 'products.id')
         ->join('category', 'products.category_id', '=', 'category.id')
+        ->where('deleted_at', '=', null)
         ->orderBy('orders_list.id', 'desc')
         ->take(16)
         ->get();

@@ -16,6 +16,7 @@
                             <th>TOTAL</th>
                             <th>DELIVERY DATE</th>
                             <th>DATE PURCHASED</th>
+                            <th>PAYMENT MODE</th>
                             <th>ACTION</th>
                         </tr>
                     </thead>
@@ -27,6 +28,7 @@
                                 <td>{{ 'Php ' . number_format($order->total, 2) }}</td>
                                 <td>{{ date('F d, Y', strtotime($order->delivery_date)) }}</td>
                                 <td>{{ date('F d, Y', strtotime($order->created_at)) }}</td>
+                                <td>{{ $order->payment_type == 0 ? "Cash on Delivery": "Card" }}</td>
                                 <td><a href="{{ url('/order/'.$order->id) }}"><i class="fa fa-search"></i> View</a></td>
                             </tr>
                         @endforeach

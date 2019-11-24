@@ -19,12 +19,14 @@ class OrderPlaced extends Notification
     public $customerInfo;
     public $cartContent;
     public $cartTotal;
+    public $paymentMode;
     
-    public function __construct($customerInfo, $cartContent, $cartTotal)
+    public function __construct($customerInfo, $cartContent, $cartTotal, $paymentMode)
     {
         $this->customerInfo = $customerInfo;
         $this->cartContent = $cartContent;
         $this->cartTotal = $cartTotal;
+        $this->paymentMode = $paymentMode;
     }
 
     /**
@@ -51,7 +53,8 @@ class OrderPlaced extends Notification
                     ->markdown('mail.orders.placed', [
                         'customer' => $this->customerInfo,
                         'orders' => $this->cartContent,
-                        'total' => $this->cartTotal
+                        'total' => $this->cartTotal,
+                        'payment_mode' => $this->paymentMode
                     ]);
     }
 

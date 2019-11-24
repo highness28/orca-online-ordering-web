@@ -191,9 +191,9 @@
 				<div id="responsive-nav">
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
-						<li><a href="{{ url('/') }}">Home</a></li>
+						<li><a href="{{ url('/') }}" style="font-size: 18px;">Home</a></li>
 						@foreach(getGlobalCategories() as $category)
-							<li><a href="{{ url('/products?category='.$category->id) }}">{{ $category->category_name }}</a></li>
+							<li><a href="{{ url('/products?category='.$category->id) }}" style="font-size: 18px;">{{ $category->category_name }}</a></li>
 						@endforeach
 					</ul>
 					<!-- /NAV -->

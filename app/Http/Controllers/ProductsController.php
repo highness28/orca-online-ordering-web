@@ -31,20 +31,24 @@ class ProductsController extends Controller
             $products = Product::whereIn('category_id', $category)
             ->whereIn('brand_id', $brand)
             ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->where('deleted_at', '=', null)
             ->paginate(15);
         }
         else if(count($category) > 0 && count($brand) == 0) {
             $products = Product::whereIn('category_id', $category)
             ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->where('deleted_at', '=', null)
             ->paginate(15);
         }
         else if(count($category) == 0 && count($brand) > 0) {
             $products = Product::whereIn('brand_id', $brand)
             ->where('product_name', 'LIKE', '%' . $productName . '%')
+            ->where('deleted_at', '=', null)
             ->paginate(15);
         }
         else {
             $products = Product::where('product_name', 'LIKE', '%' . $productName . '%')
+            ->where('deleted_at', '=', null)
             ->paginate(15);
         }
 

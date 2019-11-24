@@ -94,6 +94,7 @@ class ProductController extends Controller
 
         $relatedProducts = Product::where('category_id', $product->category_id)
         ->where('id', '!=', $product->id)
+        ->where('deleted_at', '=', null)
         ->take(20)
         ->get();
 
@@ -284,10 +285,13 @@ class ProductController extends Controller
             $addressBook = AddressBook::find($request->address_book);
         }
 
+        $paymentMode = $request->payment_method;
+        $paymentType = $paymentMode == "Cash on Delivery" ? "0":"1";
         $invoice = Invoice::create([
             'address_book_id' => $addressBook->id,
             'customer_id' => $customerInfo->id,
             'tracking_number' => base64_encode(time()),
+            'payment_type' => $paymentType,
             'total' => Cart::getTotal()
         ]);
 
@@ -310,7 +314,7 @@ class ProductController extends Controller
             ]);
         }
 
-        $user->notify(new OrderPlaced($customerInfo, $cartContent, $cartTotal));
+        $user->notify(new OrderPlaced($customerInfo, $cartContent, $cartTotal, $paymentMode));
 
         Cart::clear();
 

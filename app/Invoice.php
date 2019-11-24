@@ -12,7 +12,8 @@ class Invoice extends Model
         'address_book_id',
         'customer_id',
         'tracking_number',
-        'total'
+        'total',
+        'payment_type'
     ];
 
     public function customer() {

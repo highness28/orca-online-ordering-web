@@ -182,7 +182,7 @@
 
                         <div class="payment-method">
                             <div class="input-radio">
-                                <input type="radio" name="payment-method" id="payment-1" checked="checked">
+                                <input type="radio" name="payment_method" id="payment-1" value="Cash on Delivery" checked="checked">
                                 <label for="payment-1">
                                     <span></span>
                                     Cash on Delivery
@@ -192,7 +192,7 @@
                             </div>
                             
                             <div class="input-radio">
-                                <input type="radio" name="payment-method" id="payment-2">
+                                <input type="radio" name="payment_method" id="payment-2" value="Card">
                                 <label for="payment-2">
                                     <span></span>
                                     Credit / Debit / Visa / BDO
@@ -229,12 +229,36 @@
                             </div>
 
                         </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Terms & condition</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                BLAH BLAH BLAH BLAH BLAH BLAH BLAH 
+                                BLAH BLAH BLAH BLAH BLAH BLAH BLAH 
+                                BLAH BLAH BLAH BLAH BLAH BLAH BLAH 
+                                BLAH BLAH BLAH BLAH BLAH BLAH BLAH 
+                                BLAH BLAH BLAH BLAH BLAH BLAH BLAH
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
                         
                         <div class="input-checkbox" style="margin-top: 20px;">
                             <input type="checkbox" name="terms_and_condition" id="terms">
                             <label for="terms">
                                 <span></span>
-                                I've read and accept the <a href="#">terms & conditions</a>
+                                I've read and accept the <a href="#" data-toggle="modal" data-target="#exampleModal">Terms & condition</a>
                             </label>
                             <br>
                             @if ($errors->has('terms_and_condition'))

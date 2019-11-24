@@ -9,10 +9,10 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="breadcrumb-tree">
-							<li><a href="{{ url('/') }}">Home</a></li>
-							<li><a href="{{ url('/products?category='.$product->category->id) }}">{{ $product->category->category_name }}</a></li>
-							<li><a href="{{ url('/products?brand='.$product->brand->id) }}">{{ $product->brand->brand_name }}</a></li>
-							<li class="active">{{ $product->product_name }}</li>
+							<li><a href="{{ url('/') }}" style="font-size: 18px;">Home</a></li>
+							<li><a href="{{ url('/products?category='.$product->category->id) }}" style="font-size: 18px;">{{ $product->category->category_name }}</a></li>
+							<li><a href="{{ url('/products?brand='.$product->brand->id) }}" style="font-size: 18px;">{{ $product->brand->brand_name }}</a></li>
+							<li class="active" style="font-size: 18px;">{{ $product->product_name }}</li>
 						</ul>
 					</div>
 				</div>
