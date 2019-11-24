@@ -20,7 +20,9 @@ class ProductController extends Controller
 {
     public function index(Request $request) {
         if(!$request->id) {
-            abort(404);
+            ProductReview::insert($request->all());
+            $product_id = base64_encode($request->product_id); 
+            return redirect('');
         }
 
         $product_id = base64_decode($request->id);

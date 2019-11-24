@@ -251,17 +251,19 @@
 										<div class="col-md-3">
 											<div id="review-form">
 												<form class="review-form">
-													<input class="input" type="text" placeholder="Your Name" value="{{ Auth::check() ? getAuth()->first_name . ' ' . getAuth()->last_name : '' }}" disabled>
-													<input class="input" type="email" placeholder="Your Email" value="{{ Auth::check() ? getAuth()->account->email : '' }}" disabled>
-													<textarea class="input" placeholder="Your Review" required></textarea>
+													<input type="text" name="product_id" class="hidden" value="{{ $product->id }}">
+													<input type="text" name="customer_id" class="hidden" value="{{ Auth::check() ? getAuth()->id : '' }}">
+													<input class="input" name="name" type="text" placeholder="Your Name" value="{{ Auth::check() ? getAuth()->first_name . ' ' . getAuth()->last_name : '' }}" disabled>
+													<input class="input" name="email" type="email" placeholder="Your Email" value="{{ Auth::check() ? getAuth()->account->email : '' }}" disabled>
+													<textarea class="input" name="description" placeholder="Your Review" required></textarea>
 													<div class="input-rating">
 														<span>Your Rating: </span>
 														<div class="stars">
-															<input id="star5" name="rating" required value="5" type="radio"><label for="star5"></label>
-															<input id="star4" name="rating" required value="4" type="radio"><label for="star4"></label>
-															<input id="star3" name="rating" required value="3" type="radio"><label for="star3"></label>
-															<input id="star2" name="rating" required value="2" type="radio"><label for="star2"></label>
-															<input id="star1" name="rating" required value="1" type="radio"><label for="star1"></label>
+															<input id="star5" name="star" required value="5" type="radio"><label for="star5"></label>
+															<input id="star4" name="star" required value="4" type="radio"><label for="star4"></label>
+															<input id="star3" name="star" required value="3" type="radio"><label for="star3"></label>
+															<input id="star2" name="star" required value="2" type="radio"><label for="star2"></label>
+															<input id="star1" name="star" required value="1" type="radio"><label for="star1"></label>
 														</div>
 													</div>
 													@if($reviewPower)
